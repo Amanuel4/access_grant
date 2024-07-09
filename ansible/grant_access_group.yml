@@ -1,0 +1,43 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+  remote_user: gmtadmin
+  vars:
+    - filename: adusers
+      domain: blueprint.lab
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Join system to AD
+      shell: |
+         /usr/sbin/realm permit --realm {{ domain }} -g {{ (username | type_debug == "list" ) | ternary (username | join(" "), username) }}
+      become: True
+
+    - name: "Create an Empty Sudoers File"
+      file:
+        path: "/etc/sudoers.d/{{ filename }}"
+        state: touch
+      ignore_errors: true
+
+    - name: "Make {{ username }} a Sudoer"
+      lineinfile:
+        path: "/etc/sudoers.d/{{ filename }}"
+        line: "{{ username }} ALL=(ALL) ALL"
+        insertbefore: BOF
+      ignore_errors: true
+
+    - name: Stop & Start ssh
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
+        enabled: true
+      ignore_errors: true
+
+    - name: Stop & Start sssd
+      ansible.builtin.service:
+        name: sssd
+        state: restarted
+        enabled: true
+      ignore_errors: true

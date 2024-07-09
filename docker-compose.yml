@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  
+  django:
+    build: .
+    command: python manage.py runserver
+    volumes:
+      - .:/app      # this helps to mirror the change in the current dir to /app folder
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    
+  
+
+
+# commands to migrate db stuffs
+
+#docker-compose run django python mange.py migrate     and the like are essential commands

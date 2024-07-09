@@ -1,0 +1,24 @@
+---
+- name: Revoke Access
+  hosts: all
+  become: yes
+  vars:
+    - filename: adusers
+      domain: blueprint.lab
+      
+  vars_files:
+    - vars.yml
+  tasks:      
+    - name: Remove user from sudoers file
+      lineinfile:
+        path: "/home/gmtadmin/access_control/access_grant/ansible/test"       
+        regexp: '^{{ item }}'
+        state: absent
+      loop: "{{ usernames }}"
+
+    - name: Stop & Start sssd
+      ansible.builtin.service:
+        name: sssd
+        state: restarted
+        enabled: true
+      ignore_errors: true
