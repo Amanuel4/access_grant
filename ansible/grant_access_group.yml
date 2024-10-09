@@ -2,10 +2,10 @@
 - hosts: all
   become: yes
   become_method: sudo
-  remote_user: gmtadmin
+  remote_user: user
   vars:
     - filename: adusers
-      domain: blueprint.lab
+      domain: domain
   vars_files:
     - vars.yml
 
