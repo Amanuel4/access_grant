@@ -3,15 +3,15 @@
   hosts: all
   become: yes
   vars:
-    - filename: adusers
-      domain: blueprint.lab
+    - filename: user
+      domain: domain
       
   vars_files:
     - vars.yml
   tasks:      
     - name: Remove user from sudoers file
       lineinfile:
-        path: "/home/gmtadmin/access_control/access_grant/ansible/test"       
+        path: "/access_control/access_grant/ansible/test"       
         regexp: '^{{ item }}'
         state: absent
       loop: "{{ usernames }}"
